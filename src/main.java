@@ -6,7 +6,6 @@ public class main {
     public static void main(String[] args) {
         Scanner teclado = new Scanner(System.in);
 
-        // ENTRADA DOS DAS TAXAS
         System.out.println("=== CONFIGURAÇÃO DE TAXAS DO MERCADO ===");
         System.out.print("Digite o % de Despesas Fixas (DF): ");
         double df = teclado.nextDouble();
@@ -19,62 +18,60 @@ public class main {
             double lucroCat = teclado.nextDouble();
             cat.setMargemLucro(lucroCat);
         }
-        // LISTA FIXA DE PRODUTOS
+
         configuracao_MK markupMercado = new configuracao_MK(df, dv, 0);
 
+        // TODOS OS PRODUTOS COMEÇAM COM SALDO INICIAL = 0
         List<produto> estoque = new ArrayList<>();
-        estoque.add(new produto("Arroz 5kg", 18.50, 30, Categoria.BASICOS));       // Índice 0
-        estoque.add(new produto("Feijão Preto 1kg", 7.20, 20, Categoria.BASICOS)); // Índice 1
-        estoque.add(new produto("Refrigerante 2L", 6.00, 20, Categoria.BEBIDAS));  // Índice 2
-        estoque.add(new produto("Sabão em Pó", 12.00, 25, Categoria.LIMPEZA));     // Índice 3
-        estoque.add(new produto("Creme Dental", 9.00, 25, Categoria.HIGIENE));     // Índice 4
-        estoque.add(new produto("Salame", 22.00, 10, Categoria.FRIOS));            // Índice 5
-        estoque.add(new produto("Banana", 12.00, 5, Categoria.HORTIFRUTI));        // Índice 6
-        estoque.add(new produto("Pão Francês", 29.00, 5, Categoria.PADARIA));      // Índice 7
-        estoque.add(new produto("Vaso de Cristal", 80.00, 10, Categoria.CONVENIENCIA)); // Índice 8
+        estoque.add(new produto("Arroz 5kg", 18.50, 0, Categoria.BASICOS));
+        estoque.add(new produto("Feijão Preto 1kg", 7.20, 0, Categoria.BASICOS));
+        estoque.add(new produto("Refrigerante 2L", 6.00, 0, Categoria.BEBIDAS));
+        estoque.add(new produto("Sabão em Pó", 12.00, 0, Categoria.LIMPEZA));
+        estoque.add(new produto("Creme Dental", 9.00, 0, Categoria.HIGIENE));
+        estoque.add(new produto("Salame", 22.00, 0, Categoria.FRIOS));
+        estoque.add(new produto("Banana", 12.00, 0, Categoria.HORTIFRUTI));
+        estoque.add(new produto("Pão Francês", 29.00, 0, Categoria.PADARIA));
+        estoque.add(new produto("Vaso de Cristal", 80.00, 0, Categoria.CONVENIENCIA));
 
-
-        // PRIMEIRO FLUXO - MOVIMENTAÇÃO DE ESTOQUE (PREÇOS ORIGINAIS)
         produto arroz = estoque.get(0);
-
         produto feijao = estoque.get(1);
-        feijao.registrarEntrada(30);
+        produto refrigerante = estoque.get(2);
+        produto sabao = estoque.get(3);
+        produto cremedental = estoque.get(4);
+        produto salame = estoque.get(5);
+        produto banana = estoque.get(6);
+        produto pao = estoque.get(7);
+        produto vaso = estoque.get(8);
+
+        // 1º FLUXO: COMPRA DO LOTE DE ABERTURA E VENDAS
+        arroz.registrarEntrada(30, 18.50);
+        arroz.registrarSaida(12);
+
+        feijao.registrarEntrada(20, 7.20);
         feijao.registrarSaida(15);
 
-        produto refrigerante = estoque.get(2);
-        refrigerante.registrarEntrada(15);
+        refrigerante.registrarEntrada(20, 6.00);
         refrigerante.registrarSaida(10);
 
-        produto sabao = estoque.get(3);
-        sabao.registrarEntrada(10);
+        sabao.registrarEntrada(25, 12.00);
         sabao.registrarSaida(5);
 
-        produto cremedental = estoque.get(4);
-        cremedental.registrarEntrada(20);
+        cremedental.registrarEntrada(25, 9.00);
         cremedental.registrarSaida(10);
 
-        produto salame = estoque.get(5);
-        salame.registrarEntrada(20);
-        salame.registrarSaida(10);
+        salame.registrarEntrada(10, 22.00);
+        salame.registrarSaida(6);
 
-        produto banana = estoque.get(6);
-        banana.registrarEntrada(25);
-        banana.registrarSaida(10);
+        banana.registrarEntrada(5, 12.00);
+        banana.registrarSaida(3);
 
-        produto pao = estoque.get(7);
-        pao.registrarEntrada(15);
-        pao.registrarSaida(10);
+        pao.registrarEntrada(5, 29.00);
+        pao.registrarSaida(2);
 
-        produto vaso = estoque.get(8);
-        vaso.registrarEntrada(20);
-        vaso.registrarSaida(10);
+        vaso.registrarEntrada(10, 80.00);
+        vaso.registrarSaida(4);
 
-
-        // SEGUNDO FLUXO - NOVAS ENTRADAS COM PREÇOS MANUAIS E NOVAS VENDAS
-
-        System.out.println("\n--- PROCESSANDO NOVOS LOTES DE ENTRADA (CUSTOS VARIADOS) ---");
-
-
+        // 2º FLUXO: RECOMPRA DE ESTOQUE (INFLACIONADO) E NOVAS VENDAS
         arroz.registrarEntrada(15, 24.00);
         arroz.registrarSaida(8);
 
@@ -102,66 +99,14 @@ public class main {
         vaso.registrarEntrada(5, 110.00);
         vaso.registrarSaida(2);
 
-        System.out.println("------------------------------------------------------------\n");
-
-        // CADASTRO DE CLIENTE
-        System.out.println("\n=== CADASTRO DE CLIENTES (CREDIÁRIO) ===");
-        Cliente cliente01 = new Cliente("Dona Maria (Vizinha)", 200.00);
-        System.out.printf("Cliente cadastrado: %s | Limite: R$ %.2f\n", cliente01.getNome(), cliente01.getLimiteCredito());
-
-        // INCLUSÃO DO NOVO CLIENTE
-        Cliente cliente02 = new Cliente("Seu José (Entregador)", 200.00);
-        System.out.printf("Cliente cadastrado: %s | Limite: R$ %.2f\n", cliente02.getNome(), cliente02.getLimiteCredito());
-
-        List<Cliente> clientes = new ArrayList<>();
-        clientes.add(cliente01);
-        clientes.add(cliente02);
-
-        // SIMULAR UMA VENDA NO CARRINHO
-        System.out.println("\n=== SIMULANDO COMPRA NO CARRINHO ===");
-
-        // COMPRA DA DONA MARIA (Arroz)
-        double precoVendaArroz = arroz.calcularPrecoVenda(markupMercado);
-        int qtdDesejada = 2;
-        double totalCarrinho = qtdDesejada * precoVendaArroz;
-
-        System.out.printf("Dona Maria está levando %d un de Arroz. Total Carrinho: R$ %.2f\n", qtdDesejada, totalCarrinho);
-
-        if (cliente01.comprarNoCrediario(totalCarrinho, qtdDesejada + "x Arroz 5kg")) {
-            arroz.registrarSaida(qtdDesejada);
-            System.out.println(" VENDA AUTORIZADA! Valor " + cliente01.getNome() + " pendurado com sucesso.");
-
-        } else {
-            System.out.println(" VENDA RECUSADA! Limite de crédito insuficiente.");
-        }
-        cliente01.imprimirExtratoCliente();
-
-        // NOVA COMPRA: SEU JOSÉ LEVANDO 2 ITENS DE FRIOS (Salame)
-        salame = estoque.get(5); // Índice 5 é o Salame (Categoria.FRIOS)
-        double precoVendaSalame = salame.calcularPrecoVenda(markupMercado);
-        int qtdSalame = 2;
-        double totalJose = qtdSalame * precoVendaSalame;
-
-        System.out.printf("\nSeu José está levando %d un de Salame. Total Carrinho: R$ %.2f\n", qtdSalame, totalJose);
-
-        if (cliente02.comprarNoCrediario(totalJose, qtdSalame + "x Salame")) {
-            salame.registrarSaida(qtdSalame); // Retira as 2 unidades do estoque físico
-            System.out.println(" VENDA AUTORIZADA! Valor " + cliente02.getNome() + " pendurado com sucesso.");
-        } else {
-            System.out.println(" VENDA RECUSADA! Limite de crédito insuficiente.");
-        }
-        cliente02.imprimirExtratoCliente();
-
-
-        // RELATORIO FINAL
-        System.out.println("=== RELATÓRIO DE SALDO FINAL ===");
+        // EXIBIÇÃO DOS RELATÓRIOS GERAIS
+        System.out.println("\n=== RELATÓRIO DE SALDO FINAL DE ESTOQUE ===");
         for (produto p : estoque) {
             p.exibirRelatorio(markupMercado);
         }
 
-        // DEMONSTRATIVO FINANCEIRO
         BalancoFinanceiro balanco = new BalancoFinanceiro();
-        balanco.gerarRelatorioFinanceiro(estoque, markupMercado, clientes);
+        balanco.gerarRelatorioFinanceiro(estoque, markupMercado);
 
         teclado.close();
     }

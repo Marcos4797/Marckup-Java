@@ -1,76 +1,81 @@
 public class produto {
+    // ATRIBUTOS EXISTENTES
     private String nome;
-    private int estoque;
-    private Categoria categoria;
     private double custoCompra;
     private int saldoInicial;
     private int totalEntradas;
     private int totalSaidas;
+    private int saldoFinal;
+    private Categoria categoria;
 
+    // NOVO ATRIBUTO: Guarda o dinheiro real que saiu do caixa em cada NF de compra
+    private double totalGastoCompras;
+
+    // CONSTRUTOR ATUALIZADO
     public produto(String nome, double custoCompra, int saldoInicial, Categoria categoria) {
         this.nome = nome;
         this.custoCompra = custoCompra;
         this.saldoInicial = saldoInicial;
-        this.estoque = saldoInicial;
         this.totalEntradas = 0;
         this.totalSaidas = 0;
+        this.saldoFinal = saldoInicial;
         this.categoria = categoria;
+        this.totalGastoCompras = 0.0; // Inicializa o acumulador financeiro zerado
     }
 
-    //  Custo Médio
-    public void registrarEntrada(int quantidade, double novoCustoCompra) {
-        if (quantidade > 0) {
-            int saldoAntes = getSaldoFinal();
-            double custoTotalAntes = saldoAntes * this.custoCompra;
-            double custoTotalNovaEntrada = quantidade * novoCustoCompra;
+    // MÉTODO DE ENTRADA ATUALIZADO (Soma o estoque e calcula o custo médio)
+    public void registrarEntrada(int quantidade, double novoCusto) {
+        // 1. Registra o dinheiro real que saiu do caixa nesta compra específica
+        this.totalGastoCompras += (quantidade * novoCusto);
 
-            this.totalEntradas += quantidade;
-            this.estoque += quantidade;
+        // 2. Lógica do Custo Médio Ponderado
+        // (Soma o valor do que sobrou com o valor do que está entrando e divide pelo total de itens)
+        this.custoCompra = ((this.saldoFinal * this.custoCompra) + (quantidade * novoCusto)) / (this.saldoFinal + quantidade);
 
-            this.custoCompra = (custoTotalAntes + custoTotalNovaEntrada) / (saldoAntes + quantidade);
-
-            System.out.printf("[Entrada] %s: %d un a R$ %.2f | Novo Custo Médio: R$ %.2f\n",
-                    nome, quantidade, novoCustoCompra, this.custoCompra);
-        }
+        // 3. Atualiza os contadores físicos de estoque
+        this.totalEntradas += quantidade;
+        this.saldoFinal += quantidade;
     }
 
-     public void registrarEntrada(int quantidade) {
-        registrarEntrada(quantidade, this.custoCompra);
-    }
-
+    // MÉTODO DE SAÍDA (Vendas)
     public void registrarSaida(int quantidade) {
-        if (quantidade > 0 && (getSaldoFinal() - quantidade >= 0)) {
-            this.totalSaidas += quantidade;
-            this.estoque -= quantidade; // Baixa no estoque físico
-        } else {
-            System.out.println("Erro: Estoque insuficiente para a saída de " + nome);
+        this.totalSaidas += quantidade;
+        this.saldoFinal -= quantidade;
+    }
+
+    // CALCULA O PREÇO DE VENDA BASEADO NO MARKUP E NA CATEGORIA
+    public double calcularPrecoVenda(configuracao_MK config) {
+        // Exemplo de cálculo usando o Markup da sua configuração e a margem da categoria
+        double margemLucro = this.categoria.getMargemLucro() / 100.0;
+        double despesasFixas = config.getDespesasFixas() / 100.0;
+        double despesasVariaveis = config.getDespesasVariaveis() / 100.0;
+
+        double divisorMarkup = 1 - (despesasFixas + despesasVariaveis + margemLucro);
+
+        if (divisorMarkup <= 0) {
+            return this.custoCompra * 2; // Margem de segurança caso o markup estoure
         }
+
+        return this.custoCompra / divisorMarkup;
     }
 
-    public int getSaldoFinal() {
-        return this.saldoInicial + this.totalEntradas - this.totalSaidas;
+    // EXIBE O RELATÓRIO INDIVIDUAL DO PRODUTO (Usado no loop da Main)
+    public void exibirRelatorio(configuracao_MK config) {
+        System.out.printf("Produto: %-20s | Custo Médio: R$ %-6.2f | Estoque Atual: %-3d | Preço Sugerido: R$ %-6.2f\n",
+                this.nome, this.custoCompra, this.saldoFinal, calcularPrecoVenda(config));
     }
 
+    // GETTERS E SETTERS
+    public String getNome() { return nome; }
     public double getCustoCompra() { return custoCompra; }
     public int getSaldoInicial() { return saldoInicial; }
     public int getTotalEntradas() { return totalEntradas; }
-    public String getNome() { return nome; }
+    public int getTotalSaidas() { return totalSaidas; }
+    public int getSaldoFinal() { return saldoFinal; }
+    public Categoria getCategoria() { return categoria; }
 
-    public double calcularPrecoVenda(configuracao_MK config) {
-        double margemLucroCategoria = this.categoria.getMargemLucro();
-        double indice = config.calcularIndiceMarkup(margemLucroCategoria);
-        return this.custoCompra * indice; // O preço de venda flutuará com o custo médio!
-    }
-
-    public void exibirRelatorio(configuracao_MK config) {
-        System.out.printf("--- Produto: %s ---\n", nome);
-        System.out.printf("Custo Médio Atual: R$ %.2f\n", custoCompra);
-        System.out.printf("Preço de Venda Sugerido (Baseado no Custo Médio): R$ %.2f\n", calcularPrecoVenda(config));
-        System.out.println("Movimentação de Estoque:");
-        System.out.println("  [+] Saldo Inicial: " + saldoInicial);
-        System.out.println("  [+] Total Entradas: " + totalEntradas);
-        System.out.println("  [-] Total Saídas: " + totalSaidas);
-        System.out.println("  [=] Saldo Atual: " + getSaldoFinal());
-        System.out.println("---------------------------\n");
+    // NOVO GETTER: Permite que a classe BalancoFinanceiro puxe o valor exato gasto em compras
+    public double getTotalGastoCompras() {
+        return totalGastoCompras;
     }
 }
