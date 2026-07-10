@@ -10,9 +10,6 @@ public class BalancoFinanceiro {
 
         Locale localeBR = Locale.of("pt", "BR");
 
-        // =========================================================================================
-        // 1. DEMONSTRATIVO DE VENDAS POR PRODUTO
-        // =========================================================================================
         System.out.println("\n=========================================================================================");
         System.out.println("                          === DEMONSTRATIVO DE VENDAS POR PRODUTO ===                    ");
         System.out.println("=========================================================================================");
@@ -21,8 +18,7 @@ public class BalancoFinanceiro {
         System.out.println("-----------------------------------------------------------------------------------------");
 
         for (produto p : estoque) {
-            // Puxa o dinheiro exato e real que saiu do caixa para as NFs deste produto
-            totalInvestidoEstoque += p.getTotalGastoCompras();
+           totalInvestidoEstoque += p.getTotalGastoCompras();
 
             int qtdVendida = p.getSaldoInicial() + p.getTotalEntradas() - p.getSaldoFinal();
 
@@ -55,13 +51,9 @@ public class BalancoFinanceiro {
                 String.format(localeBR, "%,.2f", lucroBrutoTotal));
         System.out.println("=========================================================================================");
 
-        // =========================================================================================
-        // 2. RESULTADO CONSOLIDADO E FLUXO DE CAIXA REAL
-        // =========================================================================================
         double totalDespesasFixas = receitaTotal * (config.getDespesasFixas() / 100.0);
         double totalDespesasVariaveis = receitaTotal * (config.getDespesasVariaveis() / 100.0);
 
-        // AJUSTADO PARA R$ 5.000,00 CONFORME SOLICITADO
         double saldoInicialCaixa = 5000.00;
         double dinheiroRealNoCaixa = saldoInicialCaixa + receitaTotal - totalDespesasFixas - totalDespesasVariaveis - totalInvestidoEstoque;
 
@@ -89,9 +81,7 @@ public class BalancoFinanceiro {
         System.out.printf(localeBR, "(=) DINHEIRO REAL FÍSICO NO CAIXA:     R$ %,.2f\n", dinheiroRealNoCaixa);
         System.out.println("=============================================\n");
 
-        // =========================================================================================
-        // 3. VALORAÇÃO E LUCRO POTENCIAL DO ESTOQUE ATUAL
-        // =========================================================================================
+
         System.out.println("=========================================================================================");
         System.out.println("                    === 3. VALORAÇÃO E LUCRO POTENCIAL DO ESTOQUE ATUAL ===              ");
         System.out.println("=========================================================================================");

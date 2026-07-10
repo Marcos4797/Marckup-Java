@@ -21,7 +21,7 @@ public class main {
 
         configuracao_MK markupMercado = new configuracao_MK(df, dv, 0);
 
-        // TODOS OS PRODUTOS COMEÇAM COM SALDO INICIAL = 0
+        // PRODUTOS SALDO INICIAL = 0
         List<produto> estoque = new ArrayList<>();
         estoque.add(new produto("Arroz 5kg", 18.50, 0, Categoria.BASICOS));
         estoque.add(new produto("Feijão Preto 1kg", 7.20, 0, Categoria.BASICOS));
@@ -43,7 +43,7 @@ public class main {
         produto pao = estoque.get(7);
         produto vaso = estoque.get(8);
 
-        // 1º FLUXO: COMPRA DO LOTE DE ABERTURA E VENDAS
+        // 1º COMPRAS e VENDAS
         arroz.registrarEntrada(30, 18.50);
         arroz.registrarSaida(12);
 
@@ -71,7 +71,7 @@ public class main {
         vaso.registrarEntrada(10, 80.00);
         vaso.registrarSaida(4);
 
-        // 2º FLUXO: RECOMPRA DE ESTOQUE (INFLACIONADO) E NOVAS VENDAS
+        // 2º COMPRAS e VENDAS
         arroz.registrarEntrada(15, 24.00);
         arroz.registrarSaida(8);
 
@@ -99,7 +99,7 @@ public class main {
         vaso.registrarEntrada(5, 110.00);
         vaso.registrarSaida(2);
 
-        // EXIBIÇÃO DOS RELATÓRIOS GERAIS
+        // EXIBIÇÃO RELATÓRIOS
         System.out.println("\n=== RELATÓRIO DE SALDO FINAL DE ESTOQUE ===");
         for (produto p : estoque) {
             p.exibirRelatorio(markupMercado);
