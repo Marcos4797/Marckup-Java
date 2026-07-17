@@ -15,7 +15,6 @@ public class configuracao_MK {
         }
         return 100.0 / (100.0 - somaPercentuais);
     }
-
     public double calcularIndiceMarkup(double margemLucroCategoria) {
         double somaPercentuais = despesasFixas + despesasVariaveis + margemLucroCategoria;
         if (somaPercentuais >= 100) {

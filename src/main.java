@@ -1,3 +1,4 @@
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -18,7 +19,6 @@ public class main {
             double lucroCat = teclado.nextDouble();
             cat.setMargemLucro(lucroCat);
         }
-
         configuracao_MK markupMercado = new configuracao_MK(df, dv, 0);
 
         // PRODUTOS SALDO INICIAL = 0
@@ -42,9 +42,11 @@ public class main {
         produto banana = estoque.get(6);
         produto pao = estoque.get(7);
         produto vaso = estoque.get(8);
+        LocalDate hoje = LocalDate.now();
 
-        // 1º COMPRAS e VENDAS
-        arroz.registrarEntrada(30, 18.50);
+       // 1º COMPRAS e VENDAS (Ajustadas com controle de datas em alguns produtos)
+       // ARROZ: Compra antiga (há 40 dias) com validade longa de 6 meses (180 dias)
+        arroz.registrarEntrada(30, 18.50, hoje.minusDays(40), hoje.plusDays(180));
         arroz.registrarSaida(12);
 
         feijao.registrarEntrada(20, 7.20);
@@ -53,7 +55,8 @@ public class main {
         refrigerante.registrarEntrada(20, 6.00);
         refrigerante.registrarSaida(10);
 
-        sabao.registrarEntrada(25, 12.00);
+        // SABÃO EM PÓ: Compra antiga (há 10 dias) com validade crítica (vence em 4 dias!)
+        sabao.registrarEntrada(25, 12.00, hoje.minusDays(10), hoje.plusDays(4));
         sabao.registrarSaida(5);
 
         cremedental.registrarEntrada(25, 9.00);
@@ -72,7 +75,8 @@ public class main {
         vaso.registrarSaida(4);
 
         // 2º COMPRAS e VENDAS
-        arroz.registrarEntrada(15, 24.00);
+        // ARROZ: Nova compra realizada hoje com validade longa de 6 meses
+        arroz.registrarEntrada(15, 24.00, hoje, hoje.plusDays(180));
         arroz.registrarSaida(8);
 
         feijao.registrarEntrada(20, 9.50);
@@ -100,10 +104,18 @@ public class main {
         vaso.registrarSaida(2);
 
         // EXIBIÇÃO RELATÓRIOS
-        System.out.println("\n=== RELATÓRIO DE SALDO FINAL DE ESTOQUE ===");
+         System.out.println("\n=== RELATÓRIO DE SALDO FINAL DE ESTOQUE ===");
         for (produto p : estoque) {
             p.exibirRelatorio(markupMercado);
         }
+
+        // Painel para Auditar Lotes, Idade de Estoque e Alertas de Validade
+        System.out.println("\n=========================================================================================");
+        System.out.println("                 === AUDITORIA DE LOTES E ANÁLISE DE PROMOÇÕES POR VALIDADE ===          ");
+        System.out.println("=========================================================================================");
+        arroz.exibirAnaliseLotes();
+        sabao.exibirAnaliseLotes();
+        System.out.println("=========================================================================================\n");
 
         BalancoFinanceiro balanco = new BalancoFinanceiro();
         balanco.gerarRelatorioFinanceiro(estoque, markupMercado);

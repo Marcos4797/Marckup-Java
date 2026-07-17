@@ -81,7 +81,6 @@ public class BalancoFinanceiro {
         System.out.printf(localeBR, "(=) DINHEIRO REAL FÍSICO NO CAIXA:     R$ %,.2f\n", dinheiroRealNoCaixa);
         System.out.println("=============================================\n");
 
-
         System.out.println("=========================================================================================");
         System.out.println("                    === 3. VALORAÇÃO E LUCRO POTENCIAL DO ESTOQUE ATUAL ===              ");
         System.out.println("=========================================================================================");
